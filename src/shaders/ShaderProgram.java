@@ -91,6 +91,7 @@ public abstract class ShaderProgram {
 			while((line=br.readLine())!=null) {
 				shaderSource.append(line);
 			}
+			System.out.println(shaderSource);
 		}catch(IOException e) {
 			System.err.println("Failed to read shader file");
 			System.exit(-1);

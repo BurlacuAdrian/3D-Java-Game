@@ -17,11 +17,11 @@ public class Camera {
 	
 	public void move() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			position.z-=INCREMENT;
+			position.z-=INCREMENT*10;
 			return;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			position.z+=INCREMENT;
+			position.z+=INCREMENT*10;
 			return;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
