@@ -11,6 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
@@ -39,9 +40,9 @@ public class MainGameLoop {
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap =new TerrainTexture(loader.loadTexture("blendMap"));
 		
-		RawModel model = OBJLoader.loadObjModel("dragon", loader);
+		RawModel model = OBJLoader.loadObjModel("person", loader);
 		
-		TexturedModel staticModel = new TexturedModel(model,new ModelTexture(loader.loadTexture("grass")));
+		TexturedModel staticModel = new TexturedModel(model,new ModelTexture(loader.loadTexture("playerTexture")));
 		
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random();
@@ -54,12 +55,15 @@ public class MainGameLoop {
 		Terrain terrain = new Terrain(0,-1,loader,texturePack,blendMap);
 		Terrain terrain2 = new Terrain(-1,-1,loader,texturePack,blendMap);
 		
+		Player player = new Player(staticModel, new Vector3f(0,0,0), 0, 0, 0, 1);
 		
-		Camera camera = new Camera();	
+		
 		MasterRenderer renderer = new MasterRenderer();
-		
+		Camera camera = new Camera(player);	
 		while(!Display.isCloseRequested()){
 			camera.move();
+			player.move();
+			renderer.processEntity(player);
 			
 			renderer.processTerrain(terrain);
 			renderer.processTerrain(terrain2);
