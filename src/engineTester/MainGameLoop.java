@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import guis.GUIRenderer;
+import guis.GUITexture;
 import models.RawModel;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
@@ -54,11 +57,6 @@ public class MainGameLoop {
 //		entities.add(treeEntity);
 		Random random = new Random();
 //		entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
-		for(int i=0;i<100;i++){
-			float xFromRandom=random.nextFloat()*400;
-			float zFromRandom=random.nextFloat() * -600;
-			entities.add(new Entity(treeTexturedModel, new Vector3f(xFromRandom,terrain.getHeightOfTerrain(xFromRandom,zFromRandom),zFromRandom),0,0,0,1));
-		}
 		
 		Light light = new Light(new Vector3f(20000,20000,2000),new Vector3f(1,1,1));
 		
@@ -66,6 +64,21 @@ public class MainGameLoop {
 		
 		Player player = new Player(playerTexturedModel, new Vector3f(0, 0, 0),0,120,0, 1);
 		
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
+		fernTextureAtlas.setNumberOfRows(2);//indicate because it's a texture atlas
+		TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), fernTextureAtlas);
+		
+		for(int i=0;i<100;i++){
+			float xFromRandom=random.nextFloat()*400;
+			float zFromRandom=random.nextFloat() * -600;
+			entities.add(new Entity(fern, new Vector3f(xFromRandom,terrain.getHeightOfTerrain(xFromRandom,zFromRandom),zFromRandom),0,0,0,1,
+					random.nextInt(4)));//specify which part of the texture atlas to be chosen
+		}//random.nextInt(4)
+		
+		List<GUITexture> GUIs = new ArrayList<GUITexture>();
+		GUITexture healthGUI = new GUITexture(loader.loadTexture("health"), new Vector2f(-0.75f,-0.9f),new Vector2f(0.25f,0.25f) );
+		GUIs.add(healthGUI);
+		GUIRenderer guiRenderer = new GUIRenderer(loader);
 		
 		MasterRenderer renderer = new MasterRenderer();
 		Camera camera = new Camera(player);	
@@ -80,9 +93,11 @@ public class MainGameLoop {
 				renderer.processEntity(entity);
 			}
 			renderer.render(light, camera);
+			guiRenderer.render(GUIs);
 			DisplayManager.updateDisplay();
 		}
 
+		guiRenderer.cleanUP();
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();
