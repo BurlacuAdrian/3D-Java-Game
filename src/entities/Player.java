@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
 import renderEngine.DisplayManager;
+import terrains.Terrain;
 
 public class Player extends Entity{
 	
@@ -57,7 +58,7 @@ public class Player extends Entity{
 		}
 	}
 	
-	public void move() {
+	public void move(Terrain terrain) {
 		checkInputs();
 	    
 	    // Update rotation
@@ -75,10 +76,13 @@ public class Player extends Entity{
 	    upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
 	    super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 
-	    if (super.getPosition().y < TERRAIN_HEIGHT) {
+	    
+	    float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
+	    
+	    if (super.getPosition().y < terrainHeight) {
 	        upwardsSpeed = 0;
 	        isInAir = false;
-	        super.getPosition().y = TERRAIN_HEIGHT;
+	        super.getPosition().y = terrainHeight;
 	    }
 	}
 
